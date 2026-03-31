@@ -3,13 +3,15 @@ import { Camera, Upload } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function Hero() {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>('/profile.png');
+  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const savedImage = localStorage.getItem('portfolio-profile-image');
     if (savedImage) {
       setImage(savedImage);
+      setImageError(false);
     }
   }, []);
 
@@ -20,6 +22,7 @@ export function Hero() {
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setImage(base64String);
+        setImageError(false);
         localStorage.setItem('portfolio-profile-image', base64String);
       };
       reader.readAsDataURL(file);
@@ -70,8 +73,13 @@ export function Hero() {
           className="relative group"
         >
           <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-white shadow-xl bg-zinc-100 relative">
-            {image ? (
-              <img src={image} alt="Oretan Thompson Bolaji" className="w-full h-full object-cover" />
+            {image && !imageError ? (
+              <img 
+                src={image} 
+                alt="Oretan Thompson Bolaji" 
+                className="w-full h-full object-cover" 
+                onError={() => setImageError(true)}
+              />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400">
                 <Camera className="w-12 h-12 mb-2 opacity-50" />
